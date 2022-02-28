@@ -2,6 +2,7 @@ apiVersion: datalake.h7kanna.dev/v1alpha1
 kind: HudiSparkQuery
 metadata:
   name: hudisparkquery-sample
+  namespace: spark-system
 spec:
   hudiVersion: 0.10.1
   sparkVersion: 3.1.2
