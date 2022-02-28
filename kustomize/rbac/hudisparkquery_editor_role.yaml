@@ -1,0 +1,24 @@
+# permissions for end users to edit hudisparkqueries.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hudisparkquery-editor-role
+rules:
+- apiGroups:
+  - datalake.h7kanna.dev
+  resources:
+  - hudisparkqueries
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datalake.h7kanna.dev
+  resources:
+  - hudisparkqueries/status
+  verbs:
+  - get

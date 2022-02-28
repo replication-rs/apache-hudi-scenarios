@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: spark-system
+commonLabels:
+  app.kubernetes.io/name: "spark"
+resources:
+  - namespace.yaml
+  - rolebinding.yaml
+  - serviceaccount.yaml
+  - leader_election_role.yaml
+generatorOptions:
+  labels:
+    type: spark
+  annotations:
+    note: spark

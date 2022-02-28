@@ -1,0 +1,20 @@
+# permissions for end users to view hudisparkqueries.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: hudisparkquery-viewer-role
+rules:
+- apiGroups:
+  - datalake.h7kanna.dev
+  resources:
+  - hudisparkqueries
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - datalake.h7kanna.dev
+  resources:
+  - hudisparkqueries/status
+  verbs:
+  - get

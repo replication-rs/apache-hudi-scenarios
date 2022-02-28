@@ -1,0 +1,9 @@
+apiVersion: datalake.h7kanna.dev/v1alpha1
+kind: HudiTable
+metadata:
+  name: hello-hudi
+  namespace: spark-system
+spec:
+  name: hello_hudi
+  hudiVersion: 0.10.1
+  sparkVersion: 3.1.2

@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: temporal-schema-init
+  namespace: temporal-system
+  labels:
+    app: temporal-schema
+spec:
+  template:
+    spec:
+      restartPolicy: "OnFailure"
+      initContainers:
+        - name: wait
+          image: busybox:1.28
+          command: [ 'sh', '-c', 'sleep 10' ]
+        - name: db-create
+          image: h7kanna/temporal-sql-tool:v1.14.5
+          args: [ "create", "--db", "temporal" ]
+          envFrom:
+            - configMapRef:
+                name: schema-config
+        - name: db-create-visibility
+          image: h7kanna/temporal-sql-tool:v1.14.5
+          args: [ "create", "--db", "temporal_visibility" ]
+          envFrom:
+            - configMapRef:
+                name: schema-config
+      containers:
+        - name: schema-create
+          image: h7kanna/temporal-sql-tool:v1.14.5
+          args: [ "setup-schema", "-v", "0.0" ]
+          env:
+            - name: SQL_DATABASE
+              value: temporal
+          envFrom:
+            - configMapRef:
+                name: schema-config
+        - name: schema-update
+          image: h7kanna/temporal-sql-tool:v1.14.5
+          args: [ "update-schema", "-d", "/schema/postgresql/v96/temporal/versioned" ]
+          env:
+            - name: SQL_DATABASE
+              value: temporal
+          envFrom:
+            - configMapRef:
+                name: schema-config
+        - name: schema-create-visibility
+          image: h7kanna/temporal-sql-tool:v1.14.5
+          args: [ "setup-schema", "-v", "0.0" ]
+          env:
+            - name: SQL_DATABASE
+              value: temporal_visibility
+          envFrom:
+            - configMapRef:
+                name: schema-config
+        - name: schema-update-visibility
+          image: h7kanna/temporal-sql-tool:v1.14.5
+          args: [ "update-schema", "-d", "/schema/postgresql/v96/visibility/versioned" ]
+          env:
+            - name: SQL_DATABASE
+              value: temporal_visibility
+          envFrom:
+            - configMapRef:
+                name: schema-config
+  backoffLimit: 5

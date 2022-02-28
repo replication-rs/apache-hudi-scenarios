@@ -1,0 +1,20 @@
+# permissions for end users to view huditables.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: huditable-viewer-role
+rules:
+- apiGroups:
+  - datalake.h7kanna.dev
+  resources:
+  - huditables
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - datalake.h7kanna.dev
+  resources:
+  - huditables/status
+  verbs:
+  - get

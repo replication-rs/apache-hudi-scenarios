@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: temporal
+  labels:
+    app: temporal
+spec:
+  serviceName: temporal
+  replicas: 1
+  selector:
+    matchLabels:
+      app: temporal
+  template:
+    metadata:
+      labels:
+        app: temporal
+    spec:
+      restartPolicy: "Always"
+      terminationGracePeriodSeconds: 60
+      initContainers:
+        - name: wait
+          image: busybox:1.28
+          command: [ 'sh', '-c', 'sleep 30' ]
+      containers:
+        - name: temporal-server
+          image: h7kanna/temporal-server:v1.14.5
+          args: [ '--root', '/etc/temporal', '--config', 'config','--env', 'postgres', 'start', '--service', 'frontend','--service', 'history','--service', 'matching','--service', 'worker' ]
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 7233
+              name: frontend-grpc
+            - containerPort: 7234
+              name: history-grpc
+            - containerPort: 7235
+              name: matching-grpc
+            - containerPort: 7239
+              name: worker-grpc
+            - containerPort: 6933
+              name: frontend-mem
+            - containerPort: 6934
+              name: history-mem
+            - containerPort: 6935
+              name: matching-mem
+            - containerPort: 6939
+              name: worker-mem
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: 1Gi
+            requests:
+              cpu: "200m"
+              memory: 256M
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - echo exiting
+          env:
+            - name: BIND_ON_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          volumeMounts:
+            - name: temporal-config
+              mountPath: /etc/temporal/config
+              readOnly: true
+            - name: temporal-dynamic-config
+              mountPath: /etc/temporal/config/dynamicconfig
+              readOnly: true
+      volumes:
+        - name: temporal-config
+          configMap:
+            name: temporal-config
+        - name: temporal-dynamic-config
+          configMap:
+            name: temporal-dynamic-config
+  volumeClaimTemplates: [ ]

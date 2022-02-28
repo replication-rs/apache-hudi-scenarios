@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: worker
+  name: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: worker
+    spec:
+      initContainers:
+        - name: wait
+          image: busybox:1.28
+          command: [ 'sh', '-c', 'until nslookup temporal-0.temporal.temporal-system.svc.cluster.local; do echo waiting for temporal; sleep 10; done;' ]
+      containers:
+        - image: controller:latest
+          imagePullPolicy: Always
+          name: worker
+          securityContext:
+            allowPrivilegeEscalation: false
+          command:
+            - /manager
+          args:
+            - buckets
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: admin
+            - name: AWS_SECRET_ACCESS_KEY
+              value: password
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi

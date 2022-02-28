@@ -1,0 +1,31 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spark-role
+  labels:
+    app.kubernetes.io/name: spark
+subjects:
+  - kind: ServiceAccount
+    name: spark
+    namespace: spark-system
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: leader-election-rolebinding
+  namespace: spark-system
+  labels:
+    app.kubernetes.io/name: spark
+subjects:
+  - kind: ServiceAccount
+    name: spark
+    namespace: spark-system
+roleRef:
+  kind: Role
+  name: leader-election-role
+  apiGroup: rbac.authorization.k8s.io

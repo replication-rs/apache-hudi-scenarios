@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: system
+spec:
+  template:
+    spec:
+      containers:
+      - name: worker
+        args:
+        - "--config=config.yaml"
+        volumeMounts:
+        - name: worker-config
+          mountPath: /config.yaml
+          subPath: config.yaml
+      volumes:
+      - name: worker-config
+        configMap:
+          name: worker-config

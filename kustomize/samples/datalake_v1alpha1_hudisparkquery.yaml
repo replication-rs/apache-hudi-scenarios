@@ -1,0 +1,14 @@
+apiVersion: datalake.h7kanna.dev/v1alpha1
+kind: HudiSparkQuery
+metadata:
+  name: hudisparkquery-sample
+  namespace: spark-system
+  labels:
+    app: sparkquery
+spec:
+  hudiVersion: 0.10.1
+  sparkVersion: 3.1.2
+  basePath: "s3a://hudi-datalake"
+  tables:
+    - "hello_hudi"
+  query: "SELECT * FROM hello_hudi"

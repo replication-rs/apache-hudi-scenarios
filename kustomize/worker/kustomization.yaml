@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: hudi-operator-system
+commonLabels:
+  app: worker
+  app.kubernetes.io/name: "worker"
+configMapGenerator:
+  - files:
+      - config.yaml
+    name: worker-config
+resources:
+  - worker.yaml
+generatorOptions:
+  labels:
+    type: worker
+  annotations:
+    note: worker
+  disableNameSuffixHash: true
+images:
+  - name: controller
+    newName: h7kanna/hudi-operator
+    newTag: latest

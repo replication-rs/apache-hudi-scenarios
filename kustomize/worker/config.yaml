@@ -1,0 +1,14 @@
+apiVersion: config.h7kanna.dev/v2
+kind: ProjectConfig
+health:
+  healthProbeBindAddress: :8081
+metrics:
+  bindAddress: 127.0.0.1:8080
+webhook:
+  port: 9443
+leaderElection:
+  leaderElect: true
+  resourceName: adf6bdb6.h7kanna.dev
+  resourceNamespace: hudi-operator-system
+temporalAddress: temporal-0.temporal.temporal-system.svc.cluster.local:7233
+temporalNamespace: hudi-operator-worker

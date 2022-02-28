@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: spark-system
+commonLabels:
+  app: minio
+  app.kubernetes.io/name: "minio"
+configMapGenerator:
+  - name: minio-config
+    envs:
+      - config/minio.env
+resources:
+  - minio.yaml
+  - secret.yaml
+generatorOptions:
+  labels:
+    type: minio
+  annotations:
+    note: minio

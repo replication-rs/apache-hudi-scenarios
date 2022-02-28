@@ -1,0 +1,88 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.8.0
+  creationTimestamp: null
+  name: hudisparkqueries.datalake.h7kanna.dev
+spec:
+  group: datalake.h7kanna.dev
+  names:
+    kind: HudiSparkQuery
+    listKind: HudiSparkQueryList
+    plural: hudisparkqueries
+    singular: hudisparkquery
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: HudiSparkQuery is the Schema for the hudisparkqueries API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: HudiSparkQuerySpec defines the desired state of HudiSparkQuery
+            properties:
+              basePath:
+                description: The Apache Spark version.
+                type: string
+              hudiVersion:
+                description: The Apache Hudi version.
+                minLength: 0
+                type: string
+              query:
+                description: SQL query
+                type: string
+              sparkFlags:
+                description: Spark job flags
+                properties:
+                  executors:
+                    description: Number of executors
+                    type: string
+                type: object
+              sparkProperties:
+                description: The Apache Spark properties.
+                items:
+                  type: string
+                type: array
+              sparkVersion:
+                description: The Apache Spark version.
+                minLength: 0
+                type: string
+              tables:
+                description: Hudi tables to query
+                items:
+                  type: string
+                type: array
+            type: object
+          status:
+            description: HudiSparkQueryStatus defines the observed state of HudiSparkQuery
+            properties:
+              status:
+                description: Query status
+                minLength: 0
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

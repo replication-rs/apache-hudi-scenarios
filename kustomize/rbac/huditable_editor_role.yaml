@@ -1,0 +1,24 @@
+# permissions for end users to edit huditables.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: huditable-editor-role
+rules:
+- apiGroups:
+  - datalake.h7kanna.dev
+  resources:
+  - huditables
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - datalake.h7kanna.dev
+  resources:
+  - huditables/status
+  verbs:
+  - get

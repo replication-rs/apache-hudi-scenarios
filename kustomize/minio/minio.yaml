@@ -1,0 +1,89 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: minio
+  name: minio
+spec:
+  ports:
+    - name: "9000"
+      port: 9000
+      nodePort: 30000
+      targetPort: 9000
+    - name: "9001"
+      port: 9001
+      nodePort: 30001
+      targetPort: 9001
+  selector:
+    app.kubernetes.io/name: minio
+  type: NodePort
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/name: data
+  name: data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: minio
+  name: minio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: minio
+    spec:
+      containers:
+        - image: minio/minio:RELEASE.2022-02-07T08-17-33Z
+          args:
+            - server
+            - /data
+            - --console-address
+            - :9001
+          envFrom:
+            - configMapRef:
+                name: minio-config
+          env:
+            - name: MINIO_ROOT_PASSWORD
+              value: password
+            - name: MINIO_ROOT_USER
+              value: admin
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - -f
+                - http://localhost:9000/minio/health/live
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 20
+          name: minio
+          ports:
+            - containerPort: 9000
+            - containerPort: 9001
+          resources: {}
+          volumeMounts:
+            - mountPath: /data
+              name: data
+      restartPolicy: Always
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data
